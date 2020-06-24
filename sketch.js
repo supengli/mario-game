@@ -169,12 +169,6 @@ function draw()
         gameChar_y += 5;
     }
     
-    
-    
-    
-    
-    
-
     // Update real position of gameChar for collision detection.
     gameChar_world_x = gameChar_x - scrollPos;
 }
