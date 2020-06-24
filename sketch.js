@@ -23,26 +23,26 @@ var canyons;
 
 function setup()
 {
-	createCanvas(1024, 576);
-	floorPos_y = height * 3/4;
-	gameChar_x = width/2;
-	gameChar_y = floorPos_y;
+    createCanvas(1024, 576);
+    floorPos_y = height * 3/4;
+    gameChar_x = width/2;
+    gameChar_y = floorPos_y;
 
-	// Variable to control the background scrolling.
-	scrollPos = 0;
+    // Variable to control the background scrolling.
+    scrollPos = 0;
 
-	// Variable to store the real position of the gameChar in the game
-	// world. Needed for collision detection.
-	gameChar_world_x = gameChar_x - scrollPos;
+    // Variable to store the real position of the gameChar in the game
+    // world. Needed for collision detection.
+    gameChar_world_x = gameChar_x - scrollPos;
 
 
-	// Boolean variables to control the movement of the game character.
-	isLeft = false;
-	isRight = false;
-	isFalling = false;
-	isPlummeting = false;
+    // Boolean variables to control the movement of the game character.
+    isLeft = false;
+    isRight = false;
+    isFalling = false;
+    isPlummeting = false;
 
-	// Initialise arrays of scenery objects.
+    // Initialise arrays of scenery objects.
     trees_x = 
     [
         250,
@@ -89,30 +89,30 @@ function setup()
 
 function draw()
 {
-	background(253, 250, 212); // fill the sky sand
+    background(253, 250, 212); // fill the sky sand
 
-	noStroke();
-	fill(194, 178, 128);
-	rect(0, floorPos_y, width, height/4); // draw some sand ground
+    noStroke();
+    fill(194, 178, 128);
+    rect(0, floorPos_y, width, height/4); // draw some sand ground
     push();
     translate(scrollPos, 0);
-	// Draw clouds.
+    // Draw clouds.
     drawClouds();
 
-	// Draw mountains.
+    // Draw mountains.
     drawMountains();
 
-	// Draw trees.
+    // Draw trees.
     drawTrees();
 
-	// Draw canyons.
+    // Draw canyons.
     for(var i = 0; i < canyons.length; i++)
     {
         drawCanyon(canyons[i]);
         checkCanyon(canyons[i]);
     }
 
-	// Draw collectable items.
+    // Draw collectable items.
     for(var i = 0; i < collectables.length; i++)
     {
         if(collectables[i].isFound == false)
@@ -123,36 +123,36 @@ function draw()
         
     }
     pop();
-	// Draw game character.
-	
-	drawGameChar();
+    // Draw game character.
 
-	// Logic to make the game character move or the background scroll.
-	if(isLeft && !isPlummeting)
-	{
-		if(gameChar_x > width * 0.2)
-		{
-			gameChar_x -= 5;
-		}
-		else
-		{
-			scrollPos += 5;
-		}
-	}
+    drawGameChar();
 
-	if(isRight && !isPlummeting)
-	{
-		if(gameChar_x < width * 0.8)
-		{
-			gameChar_x  += 5;
-		}
-		else
-		{
-			scrollPos -= 5; // negative for moving against the background
-		}
-	}
+    // Logic to make the game character move or the background scroll.
+    if(isLeft && !isPlummeting)
+    {
+        if(gameChar_x > width * 0.2)
+        {
+            gameChar_x -= 5;
+        }
+        else
+        {
+            scrollPos += 5;
+        }
+    }
 
-	// Logic to make the game character rise and fall.
+    if(isRight && !isPlummeting)
+    {
+        if(gameChar_x < width * 0.8)
+        {
+            gameChar_x  += 5;
+        }
+        else
+        {
+            scrollPos -= 5; // negative for moving against the background
+        }
+    }
+
+    // Logic to make the game character rise and fall.
     if(gameChar_y < floorPos_y)
     {
         gameChar_y += 2;
@@ -175,8 +175,8 @@ function draw()
     
     
 
-	// Update real position of gameChar for collision detection.
-	gameChar_world_x = gameChar_x - scrollPos;
+    // Update real position of gameChar for collision detection.
+    gameChar_world_x = gameChar_x - scrollPos;
 }
 
 
@@ -226,8 +226,8 @@ function keyReleased()
 
 function drawGameChar()
 {
-	//the game character
-	if(isLeft && isFalling)
+    //the game character
+    if(isLeft && isFalling)
     {
         // add your jumping-left code
         //feet
@@ -275,9 +275,9 @@ function drawGameChar()
         strokeWeight(0.5);
         ellipse(gameChar_x - 10,  gameChar_y - 10, 4, 4);
         strokeWeight(1);
-	}
-	else if(isRight && isFalling)
-	{
+    }
+    else if(isRight && isFalling)
+    {
         //feet
         fill(255, 0, 0);
         stroke(100);
@@ -325,8 +325,8 @@ function drawGameChar()
         ellipse(gameChar_x + 10,  gameChar_y - 10, 4, 4);
         strokeWeight(1);
 
-	}
-	else if(isLeft)
+    }
+    else if(isLeft)
     {
         //feet
         fill(255, 0, 0);
@@ -373,8 +373,8 @@ function drawGameChar()
         ellipse(gameChar_x - 10,  gameChar_y - 10, 4, 4);
         strokeWeight(1);
 
-	}
-	else if(isRight)
+    }
+    else if(isRight)
     {
         //feet
         fill(255, 0, 0);
@@ -420,8 +420,8 @@ function drawGameChar()
         strokeWeight(0.5);
         ellipse(gameChar_x + 10,  gameChar_y - 10, 4, 4);
         strokeWeight(1);
-	}
-	else if(isFalling || isPlummeting)
+    }
+    else if(isFalling || isPlummeting)
     {
         //feet
         fill(255, 0, 0);
@@ -470,10 +470,10 @@ function drawGameChar()
         strokeWeight(0.5);
         ellipse(gameChar_x,  gameChar_y - 10, 6, 4);
         strokeWeight(1);
-	}
-	else
-	{
-		// feet
+    }
+    else
+    {
+        // feet
         fill(255, 0, 0);
         stroke(100);
         ellipse(gameChar_x - 10, gameChar_y - 5, 15, 10);
@@ -523,7 +523,7 @@ function drawGameChar()
         ellipse(gameChar_x,  gameChar_y - 10, 6, 4);
         strokeWeight(1);
 
-	}
+    }
 }
 
 // ---------------------------
