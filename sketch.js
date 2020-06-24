@@ -1,175 +1,234 @@
 /*
 
-The Game Project
-
-Week 3
-
-Game interaction
+The Game Project 5 - Bring it all together
 
 */
-
 
 var gameChar_x;
 var gameChar_y;
 var floorPos_y;
+var scrollPos;
+var gameChar_world_x;
 
 var isLeft;
 var isRight;
 var isFalling;
 var isPlummeting;
-var isJumped;
 
-var mountain;
-var mountain_2;
-var tree;
-var cloud;
-var canyon;
-var collectable;
-
+var trees_x;
+var collectables;
+var clouds;
+var mountains;
+var canyons;
 
 function setup()
 {
-	createCanvas(1024, 576  );
+	createCanvas(1024, 576);
 	floorPos_y = height * 3/4;
-	gameChar_x = width/15;
+	gameChar_x = width/2;
 	gameChar_y = floorPos_y;
-    
-    mountain = {x_pos: 700, y_pos: floorPos_y, size: 500};
-    mountain_2 = {x_pos: 500, y_pos: floorPos_y, size: 200};
-    tree = {x_pos: 500, y_pos: floorPos_y, size: 25};
-    cloud = {x_pos: 200, y_pos: 100, size: 30};
-    canyon = {x_pos: 100, y_pos: floorPos_y, width: 120};
-    collectable = {x_pos: 500, y_pos: floorPos_y, size: 10, isFound: false};
 
-    isLeft = false;
-    isRight = false;
-    isFalling = false;
-    isPlummeting = false;
-    isJumped = false;
+	// Variable to control the background scrolling.
+	scrollPos = 0;
+
+	// Variable to store the real position of the gameChar in the game
+	// world. Needed for collision detection.
+	gameChar_world_x = gameChar_x - scrollPos;
+
+
+	// Boolean variables to control the movement of the game character.
+	isLeft = false;
+	isRight = false;
+	isFalling = false;
+	isPlummeting = false;
+
+	// Initialise arrays of scenery objects.
+    trees_x = 
+    [
+        250,
+        300,
+        800,
+        1200,
+        -500
+    ];
+
+    collectables = 
+    [
+        {x_pos: 50, y_pos: floorPos_y, size: 10, isFound: false},
+        {x_pos: 800, y_pos: floorPos_y, size: 20, isFound: false},
+        {x_pos: 1800, y_pos: floorPos_y, size: 30, isFound: false}
+    ];
+
+    clouds = 
+    [
+        {x_pos: 100, y_pos: 200, size: 22},
+        {x_pos: 600, y_pos: 100, size: 30},
+        {x_pos: 800, y_pos: 200, size: 14},
+        {x_pos: 1000, y_pos: 100, size: 14},
+        {x_pos: 1200, y_pos: 200, size: 22},
+        {x_pos: 1800, y_pos: 150, size: 30}
+    ];
+
+    mountains =
+    [
+        {x_pos: 700, size: 500},
+        {x_pos: 500, size: 200},
+        {x_pos: 1500, size: 200},
+        {x_pos: 1800, size: 500}
+    ];
+    
+    canyons = 
+    [
+        {x_pos: 100, width: 120}, 
+        {x_pos: 600, width: 150},
+        {x_pos: 1600, width: 100},
+        {x_pos: 2000, width: 100}
+    ];
+
 }
 
 function draw()
 {
-
-	///////////DRAWING CODE//////////
-
-	background(253, 250, 212); //fill the sky sand
-
+	background(253, 250, 212); // fill the sky sand
 
 	noStroke();
 	fill(194, 178, 128);
-	rect(0, floorPos_y, width, height - floorPos_y); //draw some sand ground
-    
-    // right mountain
-    fill(255, 227, 160);
-    triangle(mountain.x_pos,
-             mountain.y_pos,
-             mountain.x_pos + mountain.size,
-             mountain.y_pos,
-             mountain.x_pos + mountain.size * 0.5,
-             mountain.y_pos - mountain.size * 0.5 );
-    
-    fill(249, 233, 142);
-    triangle(mountain.x_pos,
-             mountain.y_pos,
-             mountain.x_pos + mountain.size * 0.6,
-             mountain.y_pos,
-             mountain.x_pos + mountain.size * 0.5,
-             mountain.y_pos - mountain.size * 0.5 );
-    
-    // left montain
-    fill(255, 227, 160);
-    triangle(mountain_2.x_pos,
-             mountain_2.y_pos,
-             mountain_2.x_pos + mountain_2.size,
-             mountain_2.y_pos,
-             mountain_2.x_pos + mountain_2.size * 0.5,
-             mountain_2.y_pos - mountain_2.size * 0.5 );
-    
-    fill(249, 233, 142);
-    triangle(mountain_2.x_pos,
-             mountain_2.y_pos,
-             mountain_2.x_pos + mountain_2.size * 0.6,
-             mountain_2.y_pos,
-             mountain_2.x_pos + mountain_2.size * 0.5,
-             mountain_2.y_pos - mountain_2.size * 0.5 );
-    
-    // draw a tree
-    fill(160, 82, 45);
-    triangle(tree.x_pos,
-             tree.y_pos,
-             tree.x_pos + tree.size,
-             tree.y_pos,
-             tree.x_pos + tree.size * 0.5,
-             tree.y_pos - tree.size * 7);
-    fill(128, 128, 0);
-    arc(tree.x_pos + tree.size * 0.5 + cos(PI/3) * tree.size * 5/2, 
-        tree.y_pos - tree.size * 7 - sin(PI/3) * tree.size * 5/2, 
-        tree.size * 5, tree.size * 5, 
-        PI/3, PI *2/3, CHORD);
-    arc(tree.x_pos + tree.size * 0.5 - cos(PI/3) * tree.size * 5/2, 
-        tree.y_pos - tree.size * 7 - sin(PI/3) * tree.size * 5/2, 
-        tree.size * 5, tree.size * 5, 
-        PI/3, PI *2/3, CHORD);
-    
-    // cloud
-    fill(255);
-    ellipse(cloud.x_pos, cloud.y_pos, cloud.size * 2, cloud.size);
-    ellipse(cloud.x_pos + cloud.size * 0.5, 
-            cloud.y_pos + cloud.size * 0.5,
-            cloud.size * 2,
-            cloud.size);
-    ellipse(cloud.x_pos + cloud.size * 0.5 * 2, 
-            cloud.y_pos + cloud.size * 0.5,
-            cloud.size * 2,
-            cloud.size);
-    ellipse(cloud.x_pos + cloud.size * 0.5 * 2, 
-            cloud.y_pos - cloud.size * 0.5,
-            cloud.size * 2,
-            cloud.size);
-    ellipse(cloud.x_pos + cloud.size * 0.5 * 1.5, 
-            cloud.y_pos - cloud.size * 0.3,
-            cloud.size *2 ,
-            cloud.size);
-    ellipse(cloud.x_pos + cloud.size * 0.5 * 3, 
-            cloud.y_pos,
-            cloud.size *2 ,
-            cloud.size);
+	rect(0, floorPos_y, width, height/4); // draw some sand ground
+    push();
+    translate(scrollPos, 0);
+	// Draw clouds.
+    drawClouds();
 
-	//draw the canyon
-    fill(253, 250, 212);
-    beginShape();
-        vertex(canyon.x_pos, canyon.y_pos);
-        vertex(canyon.x_pos + 15, canyon.y_pos + 40);
-        vertex(canyon.x_pos, height);
-        vertex(canyon.x_pos + canyon.width, height);
-        vertex(canyon.x_pos + canyon.width - 5, height - 50);
-        vertex(canyon.x_pos + canyon.width - 20, height - 53);
-        vertex(canyon.x_pos + canyon.width, canyon.y_pos);
-    endShape();
-    fill(224, 255, 255);
-    quad(canyon.x_pos + 4, height - 30,
-         canyon.x_pos, height,
-         canyon.x_pos + canyon.width, height,
-         canyon.x_pos + canyon.width - 3, height - 30
-        )
+	// Draw mountains.
+    drawMountains();
 
-    // draw the collectable
-    if(!collectable.isFound) {
-        fill(255, 215, 0);
-        stroke(255, 255, 0);
-        var angle = TWO_PI / 5;
-        var halfAngle = angle/2.0;
-        beginShape();
-        for (var a = 0; a < TWO_PI; a += angle) {
-            var sx = collectable.x_pos + cos(a) * collectable.size;
-            var sy = collectable.y_pos - 20 + sin(a) * collectable.size;
-            vertex(sx, sy);
-        }
-        endShape(CLOSE);
+	// Draw trees.
+    drawTrees();
+
+	// Draw canyons.
+    for(var i = 0; i < canyons.length; i++)
+    {
+        drawCanyon(canyons[i]);
+        checkCanyon(canyons[i]);
     }
+
+	// Draw collectable items.
+    for(var i = 0; i < collectables.length; i++)
+    {
+        if(collectables[i].isFound == false)
+            {
+                drawCollectable(collectables[i]);
+                checkCollectable(collectables[i]);
+            }
+        
+    }
+    pop();
+	// Draw game character.
+	
+	drawGameChar();
+
+	// Logic to make the game character move or the background scroll.
+	if(isLeft && !isPlummeting)
+	{
+		if(gameChar_x > width * 0.2)
+		{
+			gameChar_x -= 5;
+		}
+		else
+		{
+			scrollPos += 5;
+		}
+	}
+
+	if(isRight && !isPlummeting)
+	{
+		if(gameChar_x < width * 0.8)
+		{
+			gameChar_x  += 5;
+		}
+		else
+		{
+			scrollPos -= 5; // negative for moving against the background
+		}
+	}
+
+	// Logic to make the game character rise and fall.
+    if(gameChar_y < floorPos_y)
+    {
+        gameChar_y += 2;
+        isFalling = true;
+    }
+    else
+    {
+        isFalling = false;
+    }
+    
+    // detect if the character is above the ground
+    if (isPlummeting) 
+    {
+        gameChar_y += 5;
+    }
+    
+    
+    
+    
+    
+    
+
+	// Update real position of gameChar for collision detection.
+	gameChar_world_x = gameChar_x - scrollPos;
+}
+
+
+// ---------------------
+// Key control functions
+// ---------------------
+
+function keyPressed()
+{
+    if(keyCode == 37)
+    {
+        isLeft = true;
+    }
+    else if(keyCode == 39)
+    {
+        isRight = true;
+    }
+    else if(keyCode == 32)
+    {
+        if(!isFalling && !isPlummeting)
+        {
+            gameChar_y -= 100;
+        }
+    }
+
+}
+
+function keyReleased()
+{
+
+    if(keyCode == 37)
+    {
+        isLeft = false;
+    }
+    else if(keyCode == 39)
+    {
+        isRight = false;
+    }
+}
+
+
+// ------------------------------
+// Game character render function
+// ------------------------------
+
+// Function to draw the game character.
+
+function drawGameChar()
+{
 	//the game character
-	if(isLeft && isFalling) {
+	if(isLeft && isFalling)
+    {
         // add your jumping-left code
         //feet
         fill(255, 0, 0);
@@ -267,7 +326,8 @@ function draw()
         strokeWeight(1);
 
 	}
-	else if(isLeft) {
+	else if(isLeft)
+    {
         //feet
         fill(255, 0, 0);
         stroke(100);
@@ -314,7 +374,8 @@ function draw()
         strokeWeight(1);
 
 	}
-	else if(isRight) {
+	else if(isRight)
+    {
         //feet
         fill(255, 0, 0);
         stroke(100);
@@ -360,7 +421,8 @@ function draw()
         ellipse(gameChar_x + 10,  gameChar_y - 10, 4, 4);
         strokeWeight(1);
 	}
-	else if(isFalling || isPlummeting) {
+	else if(isFalling || isPlummeting)
+    {
         //feet
         fill(255, 0, 0);
         stroke(100);
@@ -462,88 +524,157 @@ function draw()
         strokeWeight(1);
 
 	}
+}
 
-	///////////INTERACTION CODE//////////
-	//Put conditional statements to move the game character below here
-    // detect if the character is plummeting
-    if(gameChar_x > canyon.x_pos && gameChar_x < canyon.x_pos + canyon.width && gameChar_y >= floorPos_y){
+// ---------------------------
+// Background render functions
+// ---------------------------
+
+// Function to draw cloud objects.
+function drawClouds()
+{
+    for(var i = 0; i < clouds.length; i += 1)
+    {
+        fill(255);
+        ellipse(clouds[i].x_pos, clouds[i].y_pos, clouds[i].size * 2, clouds[i].size);
+        ellipse(clouds[i].x_pos + clouds[i].size * 0.5, 
+                clouds[i].y_pos + clouds[i].size * 0.5,
+                clouds[i].size * 2,
+                clouds[i].size);
+        ellipse(clouds[i].x_pos + clouds[i].size * 0.5 * 2, 
+                clouds[i].y_pos + clouds[i].size * 0.5,
+                clouds[i].size * 2,
+                clouds[i].size);
+        ellipse(clouds[i].x_pos + clouds[i].size * 0.5 * 2, 
+                clouds[i].y_pos - clouds[i].size * 0.5,
+                clouds[i].size * 2,
+                clouds[i].size);
+        ellipse(clouds[i].x_pos + clouds[i].size * 0.5 * 1.5, 
+                clouds[i].y_pos - clouds[i].size * 0.3,
+                clouds[i].size *2 ,
+                clouds[i].size);
+        ellipse(clouds[i].x_pos + clouds[i].size * 0.5 * 3, 
+                clouds[i].y_pos,
+                clouds[i].size *2 ,
+                clouds[i].size);
+    }
+}
+
+// Function to draw mountains objects.
+function drawMountains()
+{
+     for(var i = 0; i < mountains.length; i += 1)
+    {
+        fill(255, 227, 160);
+        triangle(mountains[i].x_pos,
+                 floorPos_y,
+                 mountains[i].x_pos + mountains[i].size,
+                 floorPos_y,
+                 mountains[i].x_pos + mountains[i].size * 0.5,
+                 floorPos_y - mountains[i].size * 0.5 );
+
+        fill(249, 233, 142);
+        triangle(mountains[i].x_pos,
+                 floorPos_y,
+                 mountains[i].x_pos + mountains[i].size * 0.6,
+                 floorPos_y,
+                 mountains[i].x_pos + mountains[i].size * 0.5,
+                 floorPos_y - mountains[i].size * 0.5 );
+    }
+}
+
+// Function to draw trees objects.
+function drawTrees()
+{
+    for(var i = 0; i < trees_x.length; i += 1)
+    {
+        fill(160, 82, 45);
+        triangle(trees_x[i],
+             floorPos_y,
+             trees_x[i] + 25,
+             floorPos_y,
+             trees_x[i] + 25 * 0.5,
+             floorPos_y - 25 * 7);
+        fill(128, 128, 0);
+        arc(trees_x[i] + 25 * 0.5 + cos(PI/3) * 25 * 5/2, 
+            floorPos_y - 25 * 7 - sin(PI/3) * 25 * 5/2, 
+            25 * 5, 25 * 5, 
+            PI/3, PI *2/3, CHORD);
+        arc(trees_x[i] + 25 * 0.5 - cos(PI/3) * 25 * 5/2, 
+            floorPos_y - 25 * 7 - sin(PI/3) * 25 * 5/2, 
+            25 * 5, 25 * 5, 
+            PI/3, PI *2/3, CHORD);
+    }
+}
+
+
+// ---------------------------------
+// Canyon render and check functions
+// ---------------------------------
+
+// Function to draw canyon objects.
+
+function drawCanyon(t_canyon)
+{
+    fill(253, 250, 212);
+        beginShape();
+            vertex(t_canyon.x_pos, floorPos_y);
+            vertex(t_canyon.x_pos + 15, floorPos_y + 40);
+            vertex(t_canyon.x_pos, height);
+            vertex(t_canyon.x_pos + t_canyon.width, height);
+            vertex(t_canyon.x_pos + t_canyon.width - 5, height - 50);
+            vertex(t_canyon.x_pos + t_canyon.width - 20, height - 53);
+            vertex(t_canyon.x_pos + t_canyon.width, floorPos_y);
+        endShape();
+    fill(224, 255, 255);
+    quad
+    (
+        t_canyon.x_pos + 4, height - 30,
+        t_canyon.x_pos, height,
+        t_canyon.x_pos + t_canyon.width, height,
+        t_canyon.x_pos + t_canyon.width - 3, height - 30
+    );
+
+
+}
+
+// Function to check character is over a canyon.
+
+function checkCanyon(t_canyon)
+{
+    if(gameChar_world_x > t_canyon.x_pos + 20 && gameChar_world_x < t_canyon.x_pos + t_canyon.width && gameChar_y >= floorPos_y){
         isPlummeting = true;
     }
-    // collusion detection
-    if(dist(gameChar_x, gameChar_y, collectable.x_pos, collectable.y_pos) < 20){
-        collectable.isFound = true;
-    }
-    // detect if the character is above the ground
-    if (!isPlummeting) {
-        if(isLeft) {
-            gameChar_x -= 2;
-        }
-
-        if(isRight) {
-            gameChar_x += 2;
-        }
-        if(gameChar_y == floorPos_y){
-            isFalling = false;
-            if(isJumped){
-            gameChar_y -= 100;
-            }
-        }
-        else if(gameChar_y < floorPos_y){
-            isFalling = true;
-            gameChar_y += 1;
-        }
-    }
-    else {
-        gameChar_y += 5;
-    }
-    
 }
 
+// ----------------------------------
+// Collectable items render and check functions
+// ----------------------------------
 
-function keyPressed()
+// Function to draw collectable objects.
+
+function drawCollectable(t_collectable)
 {
-	// if statements to control the animation of the character when
-	// keys are pressed.
-
-	//open up the console to see how these work
-	console.log("keyPressed: " + key);
-	console.log("keyPressed: " + keyCode);
-    
-    // implement left and right for keyPressed
-    if(keyCode == 37) {
-        //console.log("left arrow");
-        isLeft = true;
+    fill(255, 215, 0);
+    stroke(255, 255, 0);
+    var angle = TWO_PI / 5;
+    var halfAngle = angle/2.0;
+    beginShape();
+    for (var a = 0; a < TWO_PI; a += angle)
+    {
+        var sx = t_collectable.x_pos + cos(a) * t_collectable.size;
+        var sy = t_collectable.y_pos - 20 + sin(a) * t_collectable.size;
+        vertex(sx, sy);
     }
-    else if(keyCode == 39) {
-        //console.log("right arrow");
-        isRight = true;
-    }
-    else if(keyCode == 32){
-        //console.log("space");
-        isJumped = true;
-    }
+    endShape(CLOSE);
 }
 
-function keyReleased()
-{
-	// if statements to control the animation of the character when
-	// keys are released.
+// Function to check character has collected an item.
 
-	console.log("keyReleased: " + key);
-	console.log("keyReleased: " + keyCode);
-    
-    // implement left and right for keyReleased
-    if(keyCode == 37) {
-        //console.log("left arrow");
-        isLeft = false;
-    }
-    else if(keyCode == 39) {
-        //console.log("right arrow");
-        isRight = false;
-    }
-    else if(keyCode == 32){ 
-        // console.log("space");
-        isJumped = false;
-    }
-    
+function checkCollectable(t_collectable)
+{
+    if(dist(gameChar_world_x, gameChar_y, t_collectable.x_pos, t_collectable.y_pos) < 50)
+        {
+            t_collectable.isFound = true;
+        }
 }
